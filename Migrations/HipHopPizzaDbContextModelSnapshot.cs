@@ -126,7 +126,7 @@ namespace HipHopPizza_ServerSide.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("order_id");
 
-                    b.Property<int?>("Price")
+                    b.Property<double?>("Price")
                         .HasColumnType("integer")
                         .HasColumnName("price");
 

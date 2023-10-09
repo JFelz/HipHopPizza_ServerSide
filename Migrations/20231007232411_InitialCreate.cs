@@ -56,7 +56,7 @@ namespace HipHopPizza_ServerSide.Migrations
                     title = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     image_url = table.Column<string>(type: "text", nullable: true),
-                    price = table.Column<int>(type: "integer", nullable: true),
+                    price = table.Column<double>(type: "double", nullable: true),
                     order_id = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
