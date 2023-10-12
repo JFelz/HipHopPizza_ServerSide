@@ -44,9 +44,13 @@ namespace HipHopPizza_ServerSide.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<int>("PhoneNumber")
-                        .HasColumnType("integer")
+                    b.Property<long>("PhoneNumber")
+                        .HasColumnType("bigint")
                         .HasColumnName("phone_number");
+
+                    b.Property<string>("Uid")
+                        .HasColumnType("text")
+                        .HasColumnName("uid");
 
                     b.HasKey("Id")
                         .HasName("pk_cashier");
@@ -114,6 +118,11 @@ namespace HipHopPizza_ServerSide.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("category");
+
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("description");
@@ -126,8 +135,8 @@ namespace HipHopPizza_ServerSide.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("order_id");
 
-                    b.Property<int?>("Price")
-                        .HasColumnType("integer")
+                    b.Property<double?>("Price")
+                        .HasColumnType("double precision")
                         .HasColumnName("price");
 
                     b.Property<string>("Title")
