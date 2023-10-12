@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HipHopPizza_ServerSide.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class HipHopPizza : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,8 +19,9 @@ namespace HipHopPizza_ServerSide.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
                     email = table.Column<string>(type: "text", nullable: true),
-                    phone_number = table.Column<int>(type: "integer", nullable: false),
-                    image_url = table.Column<string>(type: "text", nullable: true)
+                    phone_number = table.Column<long>(type: "bigint", nullable: false),
+                    image_url = table.Column<string>(type: "text", nullable: true),
+                    uid = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -56,7 +57,8 @@ namespace HipHopPizza_ServerSide.Migrations
                     title = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     image_url = table.Column<string>(type: "text", nullable: true),
-                    price = table.Column<double>(type: "double", nullable: true),
+                    price = table.Column<double>(type: "double precision", nullable: true),
+                    category = table.Column<string>(type: "text", nullable: false),
                     order_id = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
