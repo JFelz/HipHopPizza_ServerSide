@@ -140,10 +140,25 @@ app.MapGet("/products", (HipHopPizzaDbContext db) =>
 });
 
 // Get Single Product 
-app.MapGet("/products/{Id}", (HipHopPizzaDbContext db, int Id) =>
+app.MapGet("/products/{id}", (HipHopPizzaDbContext db, int id) =>
 {
-    return db.Products.FirstOrDefault(p => p.Id == Id);
+    return db.Products.FirstOrDefault(p => p.Id == id);
 
+});
+
+app.MapGet("/products/pizza", (HipHopPizzaDbContext db) =>
+{
+    return db.Products.Select(x => x.Category == "pizza");
+});
+
+app.MapGet("/products/wings", (HipHopPizzaDbContext db) =>
+{
+    return db.Products.Select(x => x.Category == "wings");
+});
+
+app.MapGet("/products/drinks", (HipHopPizzaDbContext db) =>
+{
+    return db.Products.Select(x => x.Category == "drink");
 });
 
 // Add New Product
