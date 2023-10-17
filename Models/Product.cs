@@ -5,8 +5,11 @@ namespace HipHopPizza_ServerSide.Models
 {
     public class Product
     {
+        [Key]
         public int Id { get; set; }
         [Required]
+
+        public List<Order> OrderList { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? ImageURL { get; set; }

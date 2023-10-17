@@ -1,14 +1,20 @@
-﻿namespace HipHopPizza_ServerSide.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HipHopPizza_ServerSide.Models
 {
     public class Order
     {
         #region Identifier
+        [Key]
         public int Id { get; set; }
+        [Required]
+
         public int CashierId { get; set; }
+        [Required]
         #endregion
 
         #region Navigation
-        public List<Product> OrderItems { get; set; }
+        public List<Product> ProductList { get; set; }
         #endregion
 
         public string CustomerName { get; set; }

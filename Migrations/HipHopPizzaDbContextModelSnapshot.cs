@@ -131,39 +131,54 @@ namespace HipHopPizza_ServerSide.Migrations
                         .HasColumnType("text")
                         .HasColumnName("image_url");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("integer")
-                        .HasColumnName("order_id");
-
                     b.Property<double?>("Price")
                         .HasColumnType("double precision")
                         .HasColumnName("price");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("title");
 
                     b.HasKey("Id")
                         .HasName("pk_products");
 
-                    b.HasIndex("OrderId")
-                        .HasDatabaseName("ix_products_order_id");
-
                     b.ToTable("products", (string)null);
                 });
 
-            modelBuilder.Entity("HipHopPizza_ServerSide.Models.Product", b =>
+            modelBuilder.Entity("OrderProduct", b =>
                 {
-                    b.HasOne("HipHopPizza_ServerSide.Models.Order", null)
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .HasConstraintName("fk_products_orders_order_id");
+                    b.Property<int>("OrderListId")
+                        .HasColumnType("integer")
+                        .HasColumnName("order_list_id");
+
+                    b.Property<int>("ProductListId")
+                        .HasColumnType("integer")
+                        .HasColumnName("product_list_id");
+
+                    b.HasKey("OrderListId", "ProductListId")
+                        .HasName("pk_order_product");
+
+                    b.HasIndex("ProductListId")
+                        .HasDatabaseName("ix_order_product_product_list_id");
+
+                    b.ToTable("order_product", (string)null);
                 });
 
-            modelBuilder.Entity("HipHopPizza_ServerSide.Models.Order", b =>
+            modelBuilder.Entity("OrderProduct", b =>
                 {
-                    b.Navigation("OrderItems");
+                    b.HasOne("HipHopPizza_ServerSide.Models.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrderListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_product_orders_order_list_id");
+
+                    b.HasOne("HipHopPizza_ServerSide.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_product_products_product_list_id");
                 });
 #pragma warning restore 612, 618
         }

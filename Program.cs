@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Http.Json;
 using HipHopPizza_ServerSide.Models;
 using HipHopPizza_ServerSide;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http.Json;
 using EFCore.NamingConventions;
+using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -148,17 +149,17 @@ app.MapGet("/products/{id}", (HipHopPizzaDbContext db, int id) =>
 
 app.MapGet("/products/pizza", (HipHopPizzaDbContext db) =>
 {
-    return db.Products.Select(x => x.Category == "pizza");
+    return db.Products.Where(x => x.Category == "pizza");
 });
 
 app.MapGet("/products/wings", (HipHopPizzaDbContext db) =>
 {
-    return db.Products.Select(x => x.Category == "wings");
+    return db.Products.Where(x => x.Category == "wings");
 });
 
 app.MapGet("/products/drinks", (HipHopPizzaDbContext db) =>
 {
-    return db.Products.Select(x => x.Category == "drink");
+    return db.Products.Where(x => x.Category == "drink");
 });
 
 // Add New Product
@@ -210,5 +211,207 @@ app.MapDelete("/Product/Delete", async (HipHopPizzaDbContext db, int id) =>
 
 #endregion
 
+#region Orders
+
+//Get All Orders
+app.MapGet("/orders/all", (HipHopPizzaDbContext db) =>
+{
+    try
+    {
+        var ReturnAll = db.Orders.ToList();
+        if (ReturnAll.Count == 0)
+        {
+            return Results.NotFound("Sorry for the inconvenience! There aren't any orders in the system.");
+        }
+        return Results.Ok(ReturnAll);
+    }
+    catch (Exception ex)
+    {
+            return Results.Problem(ex.Message);
+    }
+});
+
+// Get Single Order
+app.MapGet("/orders/{id}", (HipHopPizzaDbContext db, int id) =>
+{
+    try
+    {
+        Order SingleOrder = db.Orders.SingleOrDefault(x => x.Id == id);
+        if (SingleOrder == null)
+        {
+            return Results.NotFound("Sorry for the inconvenience! This order does not exist.");
+        }
+        return Results.Ok(SingleOrder);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+// Get Products from Order
+app.MapGet("/orders/products", (HipHopPizzaDbContext db, int id) =>
+{
+    try
+    {
+        var SingleOrder = db.Orders
+            .Where(db => db.Id == id)
+            .Include(Order => Order.ProductList)
+            .ToList();
+
+        if (SingleOrder == null)
+        {
+            return Results.NotFound("Sorry for the inconvenience! This order does not exist.");
+        }
+        return Results.Ok(SingleOrder);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+// Create Order
+app.MapPost("/orders/new", (HipHopPizzaDbContext db, Order payload) =>
+{
+        db.Orders.Add(payload);
+        db.SaveChanges();
+        return Results.Ok();
+});
+
+// Add Product to Order
+app.MapPost("/orders/productslist", (HipHopPizzaDbContext db, int orderId, Product payload) =>
+{
+    // Retrieve object reference of Orders in order to manipulate (Not a query result)
+    var order = db.Orders
+    .Where(o => o.Id == orderId)
+    .Include(o => o.ProductList)
+    .FirstOrDefault();
+
+    if (order == null)
+    {
+        return Results.NotFound("Order not found.");
+    }
+
+    order.ProductList.Add(payload);
+
+    db.SaveChanges();
+
+    return Results.Ok(order);
+
+});
+
+// Delete Order
+app.MapDelete("/orders/delete", (HipHopPizzaDbContext db, int Id) =>
+{
+    var DeletedOrder = db.Orders.FirstOrDefault(o => o.Id == Id);
+
+    try
+    {
+        if (DeletedOrder == null)
+        {
+            return Results.NotFound("Sorry, the order you requested has not been found.");
+        }
+        db.Orders.Remove(DeletedOrder);
+        db.SaveChanges();
+        return Results.Ok(DeletedOrder);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+// Delete Products from Order
+app.MapDelete("/orders/productslist/remove", (HipHopPizzaDbContext db, int orderId, int productId) =>
+{
+    var targetOrder = db.Orders.FirstOrDefault(o => o.Id == orderId);
+    // grab from orders
+
+    //grab from products
+
+ 
+/*        if (targetOrder == null)
+        {
+           return Results.NotFound("Sorry, the order you requested has not been found.");
+        } else if (targetOrder.ProductList != null)
+        {
+            var targetProduct = targetOrder?.ProductList.FirstOrDefault(p => p.Id == productId);
+            db.Orders.
+        }*/
+
+    
+
+  
+    try
+    {
+        var SingleOrder = db.Orders
+            .Where(db => db.Id == orderId)
+            .Include(Order => Order.ProductList)
+            .ToList();
+
+        if (SingleOrder == null)
+        {
+            return Results.NotFound("Sorry for the inconvenience! This order does not exist.");
+        }
+
+        foreach (var item in SingleOrder)
+        {
+            if (item.Id == productId)
+            {
+                SingleOrder.Remove(item);
+            }
+        }
+
+        db.SaveChanges();
+        return Results.Ok(SingleOrder);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+
+/*
+    List<Order> y = new List<Order>();
+    var result = y;
+  foreach(Order order in db.Orders)
+    {
+        if (order.Id == orderId)
+        {
+            if (order.ProductList != null)
+            {
+                foreach (var item in order.ProductList)
+                {
+                    if (item.Id == productId)
+                        order.ProductList.Remove(item);
+                    result.Add(order);
+                    db.SaveChanges();
+                }          
+            }
+        }
+        else return Results.NotFound("Order has not been found!");
+    }
+    return Results.Ok(result);*/
+
+/*    SelectedOrder.ProductList.Remove(removeOrderProduct);
+    db.SaveChanges();*/
+/*    return Results.Ok(SelectedOrder);*/
+
+    /*  if (SelectedOrder == null)
+      {
+          return Results.NotFound("Order not found.");
+      }
+      if (removeOrderProduct == null)
+      {
+          return Results.NotFound("Product not found.");
+      }
+
+      SelectedOrder.ProductList?.Remove(removeOrderProduct);
+      db.SaveChanges();
+      return Results.Accepted("Order removed:", removeOrderProduct);*/
+
+});
+
+#endregion
 
 app.Run();
