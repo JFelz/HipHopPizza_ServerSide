@@ -324,93 +324,32 @@ app.MapDelete("/orders/delete", (HipHopPizzaDbContext db, int Id) =>
 
 // Delete Products from Order
 app.MapDelete("/orders/productslist/remove", (HipHopPizzaDbContext db, int orderId, int productId) =>
-{
-    var targetOrder = db.Orders.FirstOrDefault(o => o.Id == orderId);
-    // grab from orders
-
-    //grab from products
-
- 
-/*        if (targetOrder == null)
-        {
-           return Results.NotFound("Sorry, the order you requested has not been found.");
-        } else if (targetOrder.ProductList != null)
-        {
-            var targetProduct = targetOrder?.ProductList.FirstOrDefault(p => p.Id == productId);
-            db.Orders.
-        }*/
-
-    
-
-  
+{  
     try
     {
+        // Include should come first before selecting
         var SingleOrder = db.Orders
-            .Where(db => db.Id == orderId)
             .Include(Order => Order.ProductList)
-            .ToList();
+            .FirstOrDefault(db => db.Id == orderId);
 
         if (SingleOrder == null)
         {
             return Results.NotFound("Sorry for the inconvenience! This order does not exist.");
         }
-
-        foreach (var item in SingleOrder)
-        {
-            if (item.Id == productId)
-            {
-                SingleOrder.Remove(item);
-            }
-        }
+        // The reason why it didn't work before is because I didnt have a method after ProductList
+        var SelectedProductList = SingleOrder.ProductList.FirstOrDefault(p => p.Id == productId);
+        SingleOrder.ProductList.Remove(SelectedProductList);
 
         db.SaveChanges();
-        return Results.Ok(SingleOrder);
+        return Results.Ok(SingleOrder.ProductList);
     }
     catch (Exception ex)
     {
         return Results.Problem(ex.Message);
     }
-
-/*
-    List<Order> y = new List<Order>();
-    var result = y;
-  foreach(Order order in db.Orders)
-    {
-        if (order.Id == orderId)
-        {
-            if (order.ProductList != null)
-            {
-                foreach (var item in order.ProductList)
-                {
-                    if (item.Id == productId)
-                        order.ProductList.Remove(item);
-                    result.Add(order);
-                    db.SaveChanges();
-                }          
-            }
-        }
-        else return Results.NotFound("Order has not been found!");
-    }
-    return Results.Ok(result);*/
-
-/*    SelectedOrder.ProductList.Remove(removeOrderProduct);
-    db.SaveChanges();*/
-/*    return Results.Ok(SelectedOrder);*/
-
-    /*  if (SelectedOrder == null)
-      {
-          return Results.NotFound("Order not found.");
-      }
-      if (removeOrderProduct == null)
-      {
-          return Results.NotFound("Product not found.");
-      }
-
-      SelectedOrder.ProductList?.Remove(removeOrderProduct);
-      db.SaveChanges();
-      return Results.Accepted("Order removed:", removeOrderProduct);*/
-
 });
+
+// Update Order Items
 
 #endregion
 
