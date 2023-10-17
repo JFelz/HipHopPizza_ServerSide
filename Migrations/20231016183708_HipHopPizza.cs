@@ -54,27 +54,45 @@ namespace HipHopPizza_ServerSide.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    title = table.Column<string>(type: "text", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: true),
                     description = table.Column<string>(type: "text", nullable: true),
                     image_url = table.Column<string>(type: "text", nullable: true),
                     price = table.Column<double>(type: "double precision", nullable: true),
-                    category = table.Column<string>(type: "text", nullable: false),
-                    order_id = table.Column<int>(type: "integer", nullable: true)
+                    category = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_products", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "order_product",
+                columns: table => new
+                {
+                    order_list_id = table.Column<int>(type: "integer", nullable: false),
+                    product_list_id = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_order_product", x => new { x.order_list_id, x.product_list_id });
                     table.ForeignKey(
-                        name: "fk_products_orders_order_id",
-                        column: x => x.order_id,
+                        name: "fk_order_product_orders_order_list_id",
+                        column: x => x.order_list_id,
                         principalTable: "orders",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_order_product_products_product_list_id",
+                        column: x => x.product_list_id,
+                        principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_products_order_id",
-                table: "products",
-                column: "order_id");
+                name: "ix_order_product_product_list_id",
+                table: "order_product",
+                column: "product_list_id");
         }
 
         /// <inheritdoc />
@@ -84,10 +102,13 @@ namespace HipHopPizza_ServerSide.Migrations
                 name: "cashier");
 
             migrationBuilder.DropTable(
-                name: "products");
+                name: "order_product");
 
             migrationBuilder.DropTable(
                 name: "orders");
+
+            migrationBuilder.DropTable(
+                name: "products");
         }
     }
 }
