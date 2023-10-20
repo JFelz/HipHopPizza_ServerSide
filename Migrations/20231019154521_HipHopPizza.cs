@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -37,8 +38,10 @@ namespace HipHopPizza_ServerSide.Migrations
                     cashier_id = table.Column<int>(type: "integer", nullable: false),
                     customer_name = table.Column<string>(type: "text", nullable: false),
                     customer_email = table.Column<string>(type: "text", nullable: false),
-                    customer_phone_number = table.Column<string>(type: "text", nullable: false),
+                    customer_phone_number = table.Column<long>(type: "bigint", nullable: false),
                     payment_type = table.Column<string>(type: "text", nullable: false),
+                    date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    tip_amount = table.Column<double>(type: "double precision", nullable: false),
                     revenue = table.Column<double>(type: "double precision", nullable: false),
                     order_status = table.Column<bool>(type: "boolean", nullable: false),
                     review = table.Column<bool>(type: "boolean", nullable: false)

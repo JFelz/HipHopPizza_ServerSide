@@ -19,8 +19,10 @@ namespace HipHopPizza_ServerSide.Models
 
         public string CustomerName { get; set; }
         public string CustomerEmail { get; set; }
-        public string CustomerPhoneNumber { get; set; }
+        public long CustomerPhoneNumber { get; set; }
         public string PaymentType { get; set; }
+        public DateTime? Date { get; set; }
+        public double TipAmount { get; set; }
         public double Revenue { get; set; }
         public bool OrderStatus { get; set; }
         public bool Review { get; set; }
