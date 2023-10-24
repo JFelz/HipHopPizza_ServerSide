@@ -1,22 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HipHopPizza_ServerSide.Models;
+using System.ComponentModel.DataAnnotations;
 
-namespace HipHopPizza_ServerSide.Models
+namespace HipHopPizza_ServerSide.DTO
 {
-    public class Order
+    public class CreateOrderDto
     {
-        #region Identifier
-        [Key]
         public int Id { get; set; }
         [Required]
-
         public int CashierId { get; set; }
-        [Required]
-        #endregion
-
-        #region Navigation
-        public List<Product> ProductList { get; set; }
-        #endregion
-
         public string CustomerName { get; set; }
         public string CustomerEmail { get; set; }
         public long CustomerPhoneNumber { get; set; }
@@ -25,5 +16,6 @@ namespace HipHopPizza_ServerSide.Models
         public double Revenue { get; set; }
         public bool OrderStatus { get; set; }
         public bool Review { get; set; }
+        public List<Product> ProductList { get; set; }
     }
 }

@@ -81,9 +81,8 @@ namespace HipHopPizza_ServerSide.Migrations
                         .HasColumnType("text")
                         .HasColumnName("customer_name");
 
-                    b.Property<string>("CustomerPhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<long>("CustomerPhoneNumber")
+                        .HasColumnType("bigint")
                         .HasColumnName("customer_phone_number");
 
                     b.Property<bool>("OrderStatus")
@@ -102,6 +101,10 @@ namespace HipHopPizza_ServerSide.Migrations
                     b.Property<bool>("Review")
                         .HasColumnType("boolean")
                         .HasColumnName("review");
+
+                    b.Property<double>("TipAmount")
+                        .HasColumnType("double precision")
+                        .HasColumnName("tip_amount");
 
                     b.HasKey("Id")
                         .HasName("pk_orders");

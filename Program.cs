@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.Json;
 using HipHopPizza_ServerSide.Models;
+using HipHopPizza_ServerSide.DTO;
 using HipHopPizza_ServerSide;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -103,6 +104,12 @@ app.MapGet("/cashier/{uid}", (HipHopPizzaDbContext db, string uid) =>
     return db.Cashier.FirstOrDefault(x => x.Uid == uid);
 });
 
+
+app.MapGet("/cashier/return/{iden}", (HipHopPizzaDbContext db, int iden) =>
+{
+    return db.Cashier.FirstOrDefault(x => x.Id == iden);
+});
+
 // Update User
 app.MapPut("/cashier/update/{uid}", (HipHopPizzaDbContext db, string uid, Cashier NewUser) =>
 {
@@ -180,7 +187,7 @@ app.MapPost("/products/new", async (HipHopPizzaDbContext db, Product NewProduct)
 });
 
 // Update an existing Product
-app.MapPut("/Product/Update", async (HipHopPizzaDbContext db, int id, Product UpdatedProduct) =>
+app.MapPut("/product/update/{id}", async (HipHopPizzaDbContext db, int id, Product UpdatedProduct) =>
 {
     var existingProduct = await db.Products.FindAsync(id);
     if (existingProduct == null)
@@ -197,7 +204,7 @@ app.MapPut("/Product/Update", async (HipHopPizzaDbContext db, int id, Product Up
 });
 
 // Delete a Product
-app.MapDelete("/Product/Delete", async (HipHopPizzaDbContext db, int id) =>
+app.MapDelete("/product/delete/{id}", async (HipHopPizzaDbContext db, int id) =>
 {
     var prod = await db.Products.FindAsync(id);
     if (prod == null)
@@ -250,7 +257,7 @@ app.MapGet("/orders/{id}", (HipHopPizzaDbContext db, int id) =>
 });
 
 // Get Products from Order
-app.MapGet("/orders/products", (HipHopPizzaDbContext db, int id) =>
+app.MapGet("/orders/{id}/products", (HipHopPizzaDbContext db, int id) =>
 {
     try
     {
@@ -279,8 +286,50 @@ app.MapPost("/orders/new", (HipHopPizzaDbContext db, Order payload) =>
         return Results.Ok();
 });
 
+// Update Order
+app.MapPut("/orders/{id}/edit", (HipHopPizzaDbContext db, int id, Order NewOrder) =>
+{
+    Order orderToUpdate = db.Orders.SingleOrDefault(p => p.Id == id);
+    if (orderToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+
+    orderToUpdate.CustomerName = NewOrder.CustomerName;
+    orderToUpdate.CustomerEmail = NewOrder.CustomerEmail;
+    orderToUpdate.CustomerPhoneNumber = NewOrder.CustomerPhoneNumber;
+    orderToUpdate.PaymentType = NewOrder.PaymentType;
+    orderToUpdate.OrderStatus = NewOrder.OrderStatus;
+    orderToUpdate.Review = NewOrder.Review;
+
+    db.SaveChanges();
+    return Results.NoContent();
+});
+
+
+// Delete Order
+app.MapDelete("/orders/{id}/delete", (HipHopPizzaDbContext db, int Id) =>
+{
+    var DeletedOrder = db.Orders.FirstOrDefault(o => o.Id == Id);
+
+    try
+    {
+        if (DeletedOrder == null)
+        {
+            return Results.NotFound("Sorry, the order you requested has not been found.");
+        }
+        db.Orders.Remove(DeletedOrder);
+        db.SaveChanges();
+        return Results.Ok(DeletedOrder);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
 // Add Product to Order
-app.MapPost("/orders/productslist", (HipHopPizzaDbContext db, int orderId, Product payload) =>
+app.MapPost("/orders/{orderId}/list", (HipHopPizzaDbContext db, int orderId, Product payload) =>
 {
     // Retrieve object reference of Orders in order to manipulate (Not a query result)
     var order = db.Orders
@@ -301,29 +350,8 @@ app.MapPost("/orders/productslist", (HipHopPizzaDbContext db, int orderId, Produ
 
 });
 
-// Delete Order
-app.MapDelete("/orders/delete", (HipHopPizzaDbContext db, int Id) =>
-{
-    var DeletedOrder = db.Orders.FirstOrDefault(o => o.Id == Id);
-
-    try
-    {
-        if (DeletedOrder == null)
-        {
-            return Results.NotFound("Sorry, the order you requested has not been found.");
-        }
-        db.Orders.Remove(DeletedOrder);
-        db.SaveChanges();
-        return Results.Ok(DeletedOrder);
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem(ex.Message);
-    }
-});
-
 // Delete Products from Order
-app.MapDelete("/orders/productslist/remove", (HipHopPizzaDbContext db, int orderId, int productId) =>
+app.MapDelete("/orders/{orderId}/list/{productId}/remove", (HipHopPizzaDbContext db, int orderId, int productId) =>
 {  
     try
     {
@@ -349,7 +377,6 @@ app.MapDelete("/orders/productslist/remove", (HipHopPizzaDbContext db, int order
     }
 });
 
-// Update Order Items
 
 #endregion
 
