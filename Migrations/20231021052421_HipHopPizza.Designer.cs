@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HipHopPizza_ServerSide.Migrations
 {
     [DbContext(typeof(HipHopPizzaDbContext))]
-    [Migration("20231019154521_HipHopPizza")]
+    [Migration("20231021052421_HipHopPizza")]
     partial class HipHopPizza
     {
         /// <inheritdoc />
@@ -87,10 +87,6 @@ namespace HipHopPizza_ServerSide.Migrations
                     b.Property<long>("CustomerPhoneNumber")
                         .HasColumnType("bigint")
                         .HasColumnName("customer_phone_number");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("date");
 
                     b.Property<bool>("OrderStatus")
                         .HasColumnType("boolean")

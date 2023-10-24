@@ -85,10 +85,6 @@ namespace HipHopPizza_ServerSide.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("customer_phone_number");
 
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("date");
-
                     b.Property<bool>("OrderStatus")
                         .HasColumnType("boolean")
                         .HasColumnName("order_status");
